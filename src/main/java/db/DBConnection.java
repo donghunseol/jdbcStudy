@@ -17,7 +17,8 @@ public class DBConnection {
             System.out.println("DB Connection success");
             return conn;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        return null;
     }
 }
