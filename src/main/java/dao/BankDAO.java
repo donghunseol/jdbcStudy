@@ -17,6 +17,15 @@ import java.util.List;
  */
 public class BankDAO {
 
+    private static BankDAO instance = new BankDAO();
+
+    public static BankDAO getInstance() {
+        return instance;
+    }
+
+    private BankDAO() {
+    }
+
     public int deleteByNumber(int number) {
         Connection conn = DBConnection.getInstance();
         try {

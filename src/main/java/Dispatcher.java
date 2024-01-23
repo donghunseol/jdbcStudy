@@ -1,29 +1,39 @@
+import annotation.RequestMapping;
 import controller.BankController;
+import dao.BankDAO;
 import lombok.AllArgsConstructor;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /***
  * 책임(SRP) : 라우팅
  */
-
-@AllArgsConstructor
 public class Dispatcher {
 
-    private BankController con;
+    private static Dispatcher instance = new Dispatcher();
 
-    public void route(String url) {
+    public static Dispatcher getInstance() {
+        return instance;
+    }
 
+    private Dispatcher() {
+    }
 
-        // 라우터, 디스패쳐
-        if (url.equals("insert")) {
-            con.insert();
-        } else if (url.equals("delete")) {
-            con.delete();
-        } else if (url.equals("update")) {
-            con.update();
-        } else if (url.equals("selectOne")) {
-            con.selectOne();
-        } else if (url.equals("selectAll")) {
-            con.selectAll();
+    public static void route(String url) throws InvocationTargetException, IllegalAccessException {
+        BankController con = BankController.getInstance();
+        Method[] methods = con.getClass().getDeclaredMethods();
+
+        for (Method method : methods) {
+            RequestMapping rm = method.getDeclaredAnnotation(RequestMapping.class);
+
+            if (rm == null) continue;
+
+            if (rm.uri().equals(url)) {
+                method.invoke(con);
+            }
         }
     }
 }
